@@ -48,6 +48,10 @@
 #define YELLED 7
 #define GRNLED 8
 
+// Define VFD Max Values
+#define SPDMAX 3650
+#define CURMAX 40
+
 // Initialize LCD Library
 LiquidCrystal_PCF8574 lcd(LCD_I2C);
 
@@ -111,7 +115,18 @@ void loop()
 
 // Convert ADC Functions
 float getMotorSpeed() {
+    int i;
+    int sval = 0;
 
+    for (i = 0; i < 5; i++) {
+        sval = sval + analogRead(MOTOR_SPD);
+    }
+
+    // Take the average of 5 readings 
+    float svalavg = sval / 5.0;
+    float mspd = svalavg / 1024 * SPDMAX;
+
+    return mspd;
 }
 
 float getOutputCurrent() {
