@@ -130,7 +130,18 @@ float getMotorSpeed() {
 }
 
 float getOutputCurrent() {
+    int i;
+    int sval = 0;
 
+    for (i = 0; i < 5; i++) {
+        sval = sval + analogRead(OUT_CUR);
+    }
+
+    // Take the average of 5 readings 
+    float svalavg = sval / 5.0;
+    float ocur = svalavg / 1024 * CURMAX;
+
+    return ocur;
 }
 
 float getMotorTemp() {
