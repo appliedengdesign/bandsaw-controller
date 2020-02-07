@@ -85,15 +85,34 @@ void setup()
         lcd.clear();
         lcd.setCursor(0,0);
 
-        lcd.print("Initializing...");
+        lcd.print("Initializing");
+        delay(500);
     } else
     {
         // No i2c comms
         Serial.println("Unable to initialize LCD...");
 
     }
-    
 
+    Serial.println("Setting Digital Outputs...");
+
+    // Setup LED Outputs
+    pinMode(REDLED, OUTPUT);
+    pinMode(YELLED, OUTPUT);
+    pinMode(GRNLED, OUTPUT);
+
+    lcd.print(".");
+    delay(500);
+
+
+
+    // Done Initializing
+    Serial.println("Initialize Complete");
+    digitalWrite(GRNLED, HIGH);
+    lcd.clear();
+    lcd.setCursor(0,0);
+
+    Serial.println("Running...");
 	
 } // setup()
 
@@ -101,15 +120,23 @@ void loop()
 {
 
     // READ MOTOR SPEED
+    float mspeed = getMotorSpeed();
 
     // READ OUTPUT CURRENT 
+    float outcur = getElectronicsTemp();
 
     // READ MOTOR TEMP 
+    float mtemp = getMotorTemp();
 
     // READ ELECTRONICS TEMP 
+    float etemp = getElectronicsTemp();
 
     // UPDATE DISPLAY 
 	
+
+
+    delay(2000);
+
 } // loop()
 
 
