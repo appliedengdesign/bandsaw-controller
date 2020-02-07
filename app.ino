@@ -139,5 +139,20 @@ float getMotorTemp() {
 }
 
 float getElectronicsTemp() {
+    int i;
+    int sval = 0;
 
+    for (i = 0; i < 5; i++) {
+        sval = sval + analogRead(ELEC_TEMP);
+    }
+
+    // Take average of 5 readings and convert to volts
+    float svalavg = sval / 5.0;
+    float volts = svalavg * 5.0;
+    volts /= 1024.0;
+
+    // Convert to temperature
+    float tempC = (volts - 0.5) * 100;
+
+    return tempC;
 }
