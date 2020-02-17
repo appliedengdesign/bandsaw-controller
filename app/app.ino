@@ -55,15 +55,24 @@
 #define GRNLED P2
 
 // Define Rotary Switch Inputs 
-#define SPD1 P3
-#define SPD2 P4 
-#define SPD3 P5 
-#define SPD4 P6
-#define SPD5 P7 
+#define POS1 P3
+#define POS2 P4 
+#define POS3 P5 
+#define POS4 P6
+#define POS5 P7 
 
 // Define VFD Max Values
 #define SPDMAX 3650
 #define CURMAX 40
+
+// Define Speed Values in frequency
+#define SPD1 45
+#define SPD2 60
+#define SPD3 75
+#define SPD4 90
+#define SPD5 105
+
+#define FREQMAX 105
 
 // Initialize LCD Library
 LiquidCrystal_PCF8574 lcd(LCD_I2C);
@@ -117,18 +126,24 @@ void setup()
     pcf.pinMode(YELLED, OUTPUT);
     pcf.pinMode(GRNLED, OUTPUT);
 
+    digitalWrite(REDLED, HIGH);
+    digitalWrite(YELLED, HIGH);
+    digitalWrite(GRNLED, HIGH);
+
     lcd.print(".");
     delay(500);
 
     Serial.println("Setting Digital Inputs...");
 
     // Setup Rotary Switch
-    pcf.pinMode(SPD1, INPUT);
-    pcf.pinMode(SPD2, INPUT);
-    pcf.pinMode(SPD3, INPUT);
-    pcf.pinMode(SPD4, INPUT);
-    pcf.pinMode(SPD5, INPUT);
+    pcf.pinMode(POS1, INPUT);
+    pcf.pinMode(POS2, INPUT);
+    pcf.pinMode(POS3, INPUT);
+    pcf.pinMode(POS4, INPUT);
+    pcf.pinMode(POS5, INPUT);
 
+    lcd.print(".");
+    delay(500);
 
     // Done Initializing
     Serial.println("Initialize Complete");
@@ -142,7 +157,8 @@ void setup()
 
 void loop()
 {
-    
+    // GET CURRENT SPEED SWITCH POSITION
+    int switchpos = getSwitchPos();
 
     // READ MOTOR SPEED
     float mspeed = getMotorSpeed();
@@ -164,6 +180,28 @@ void loop()
 
 } // loop()
 
+
+// Get Switch Position 
+int getSwitchPos() {
+
+    uint8_t val;
+
+    val = pcf.digitalRead(POS1);
+    if (val == HIGH) return 1;
+
+    val = pcf.digitalRead(POS2);
+    if (val == HIGH) return 2;
+
+    val = pcf.digitalRead(POS3);
+    if (val == HIGH) return 3;
+
+    val = pcf.digitalRead(POS4);
+    if (val == HIGH) return 4;
+
+    val = pcf.digitalRead(POS5);
+    if (val == HIGH) return 5;
+
+}
 
 // Convert ADC Functions
 float getMotorSpeed() {
