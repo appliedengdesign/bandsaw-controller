@@ -3,6 +3,7 @@
         {
             "name": "Win32",
             "includePath": [
+                "C:\\Users\\Mike\\Documents\\Arduino\\libraries\\PCF8574",
                 "C:\\Users\\Mike\\Documents\\Arduino\\libraries\\LiquidCrystal_PCF8574\\src",
                 "C:\\Users\\Mike\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\**",
                 "C:\\Users\\Mike\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.2\\**"

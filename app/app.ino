@@ -29,13 +29,19 @@
 
 */
 
-#include <LiquidCrystal_PCF8574.h>
-#include <Wire.h>
+#define ARDUINO 10810
 
-// Define the i2c address for the LCD display
+#include <Wire.h>
+#include <LiquidCrystal_PCF8574.h>
+#include <PCF8574.h>
+
+// Define LCD Parameters
 #define LCD_I2C 0x27
 #define LCD_COLS 20
 #define LCD_ROWS 4
+
+// Define PCF8574 Parameters
+#define PCF_I2C 0x20
 
 // Define Analog Pins
 #define MOTOR_SPD 0
@@ -44,9 +50,16 @@
 #define ELEC_TEMP 3
 
 // Define digital LED Output
-#define REDLED 6
-#define YELLED 7
-#define GRNLED 8
+#define REDLED P0
+#define YELLED P1
+#define GRNLED P2
+
+// Define Rotary Switch Inputs 
+#define SPD1 P3
+#define SPD2 P4 
+#define SPD3 P5 
+#define SPD4 P6
+#define SPD5 P7 
 
 // Define VFD Max Values
 #define SPDMAX 3650
@@ -54,6 +67,9 @@
 
 // Initialize LCD Library
 LiquidCrystal_PCF8574 lcd(LCD_I2C);
+
+// Initialize PCF8574 Expander
+PCF8574 pcf(PCF_I2C);
 
 
 // Global Variables
@@ -97,13 +113,21 @@ void setup()
     Serial.println("Setting Digital Outputs...");
 
     // Setup LED Outputs
-    pinMode(REDLED, OUTPUT);
-    pinMode(YELLED, OUTPUT);
-    pinMode(GRNLED, OUTPUT);
+    pcf.pinMode(REDLED, OUTPUT);
+    pcf.pinMode(YELLED, OUTPUT);
+    pcf.pinMode(GRNLED, OUTPUT);
 
     lcd.print(".");
     delay(500);
 
+    Serial.println("Setting Digital Inputs...");
+
+    // Setup Rotary Switch
+    pcf.pinMode(SPD1, INPUT);
+    pcf.pinMode(SPD2, INPUT);
+    pcf.pinMode(SPD3, INPUT);
+    pcf.pinMode(SPD4, INPUT);
+    pcf.pinMode(SPD5, INPUT);
 
 
     // Done Initializing
@@ -118,12 +142,13 @@ void setup()
 
 void loop()
 {
+    
 
     // READ MOTOR SPEED
     float mspeed = getMotorSpeed();
 
     // READ OUTPUT CURRENT 
-    float outcur = getElectronicsTemp();
+    float outcur = getOutputCurrent();
 
     // READ MOTOR TEMP 
     float mtemp = getMotorTemp();
