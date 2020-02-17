@@ -1,3 +1,5 @@
+
+
 /* 
     Bandsaw Controller
 
@@ -34,6 +36,7 @@
 #include <Wire.h>
 #include <LiquidCrystal_PCF8574.h>
 #include <PCF8574.h>
+#include <Adafruit_MCP4725.h>
 
 // Define LCD Parameters
 #define LCD_I2C 0x27
@@ -74,15 +77,21 @@
 
 #define FREQMAX 105
 
+// Define DAC Address
+#define DACADDR 0x62
+
 // Initialize LCD Library
 LiquidCrystal_PCF8574 lcd(LCD_I2C);
 
 // Initialize PCF8574 Expander
 PCF8574 pcf(PCF_I2C);
 
+// Initialize DAC
+Adafruit_MCP4725 dac;
+
 
 // Global Variables
-int val = 0;
+int curswpos = 0;
 
 
 void setup()
@@ -145,6 +154,19 @@ void setup()
     lcd.print(".");
     delay(500);
 
+    // Initialize PCF 
+    Serial.println("Initializing PCF8574...");
+    pcf.begin();
+
+    lcd.print(".");
+    delay(500);
+
+    // Initialize DAC
+    Serial.println("Initializing DAC");
+    dac.begin(DACADDR);
+
+
+
     // Done Initializing
     Serial.println("Initialize Complete");
     digitalWrite(GRNLED, HIGH);
@@ -159,6 +181,11 @@ void loop()
 {
     // GET CURRENT SPEED SWITCH POSITION
     int switchpos = getSwitchPos();
+
+    if (switchpos != curswpos) {
+        // Set Motor Speed
+        setMotorSpeed(switchpos);
+    }
 
     // READ MOTOR SPEED
     float mspeed = getMotorSpeed();
@@ -201,6 +228,40 @@ int getSwitchPos() {
     val = pcf.digitalRead(POS5);
     if (val == HIGH) return 5;
 
+}
+
+void setMotorSpeed(int swpos) {
+
+    uint32_t anout;
+    float modifier = 0.0;
+
+    // Set Analog Output based on switch position
+    switch(swpos) {
+        case 1:
+            modifier = SPD1 / FREQMAX;
+            break;
+        
+        case 2:
+            modifier = SPD2 / FREQMAX;
+            break;
+
+        case 3:
+            modifier = SPD3 / FREQMAX;
+            break;
+
+        case 4:
+            modifier = SPD4 / FREQMAX;
+            break;
+
+        case 5:
+            modifier = SPD5 / FREQMAX;
+            break;
+    }
+
+    anout = modifier * 4095;
+
+    // Set DAC voltage
+    dac.setVoltage(anout, false);
 }
 
 // Convert ADC Functions
