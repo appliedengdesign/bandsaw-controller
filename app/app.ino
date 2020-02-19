@@ -110,6 +110,7 @@ void setup()
         // LCD Found, Initialize
         Serial.println("LCD Found");
         lcd.begin(LCD_COLS, LCD_ROWS);
+        lcd.noAutoscroll();
 
         lcd.setCursor(5,1);
         lcd.print("BANDSAW 1.0");
