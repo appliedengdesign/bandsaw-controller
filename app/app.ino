@@ -80,6 +80,11 @@
 // Define DAC Address
 #define DACADDR 0x62
 
+// Define Pulley Sizes
+#define SMPUL 3.75
+#define LGPUL 7.75
+#define SAWPUL 11.375
+
 // Initialize LCD Library
 LiquidCrystal_PCF8574 lcd(LCD_I2C);
 
@@ -334,4 +339,13 @@ float getElectronicsTemp() {
     float tempC = (volts - 0.5) * 100;
 
     return tempC;
+}
+
+float convertMspdToSFM(float motorspeed) {
+
+    float rpm = (motorspeed * (SMPUL / LGPUL)) / 20;
+
+    float sfm = (3.14159 / (60 / rpm) * SAWPUL) * 60 / 12;
+
+    return sfm;
 }
