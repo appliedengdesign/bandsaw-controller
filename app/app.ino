@@ -185,6 +185,7 @@ void loop()
     if (switchpos != curswpos) {
         // Set Motor Speed
         setMotorSpeed(switchpos);
+        curswpos = switchpos;
     }
 
     // READ MOTOR SPEED
